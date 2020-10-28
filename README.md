@@ -5,7 +5,7 @@ Ukrainian: Віддалене керуванням ПК через бота в D
 English: Remote control of PC with bot in Discord: Python(discordpy) + Autohotkey
 </p>
 
-[![MouseMove](https://j.gifs.com/4Q7E46.gif)](https://youtu.be/GzXUTOoDrUI)
+[![MouseMove](https://j.gifs.com/4Q7E46.gif)](https://youtu.be/JND1uxRq8FE)
 
 
 since 19.11.2018
