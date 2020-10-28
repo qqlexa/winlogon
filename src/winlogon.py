@@ -831,7 +831,7 @@ class Scripts:
                     break
 
             embed = await Discord.edit_embed(later_embed=embed)
-        await client.delete_message(embed)
+        await embed.delete()
 
     @staticmethod
     async def emoji():
@@ -950,7 +950,7 @@ class Scripts:
 
                     if emoji:
                         if emoji.reaction.emoji == "❌":
-                            await client.delete_message(embed)
+                            await embed.delete()
 
                         if emoji.reaction.emoji == "▶":
                             this_page += 1
@@ -1025,7 +1025,7 @@ class Scripts:
         except BaseException:
             pass
         try:
-            await client.delete_message(msg_status_of_users)
+            await msg_status_of_users.delete()
         except BaseException:
             pass
         await message.add_reaction("👍")
@@ -1063,7 +1063,7 @@ class Scripts:
         settings = Scripts.get_settings(message.content3)
         time = Settings.seconds(settings)
         script = "shutdown -s -t {time}".format(time=time)
-        await client.delete_message(msg_status_of_users)
+        await msg_status_of_users.delete()
         await Scripts.ahk(script, "shutdown.ahk", status=False)
         await Discord.send_embed(description="I will shutdown.")
 
@@ -1103,7 +1103,7 @@ class Scripts:
     async def reload(message):
         global msg_status_of_users
         try:
-            await client.delete_message(msg_status_of_users)
+            await msg_status_of_users.delete()
         except BaseException:
             pass
         await message.add_reaction("👍")
@@ -1304,7 +1304,7 @@ async def on_message(message):
 
     if command == "!quit" or command == "!exit":
         await Channel.main().send("Okey :ok_hand:")
-        await client.delete_message(msg_status_of_users)
+        await msg_status_of_users.delete()
         quit()
 
     # elif command == "!default":
