@@ -1088,10 +1088,10 @@ class Scripts:
     @staticmethod
     async def display(message):
         settings = Scripts.get_settings(message.content)
-        time = Settings.seconds(settings)
-        script = """Loop {times}{s1}
-        SendMessage, 0x112, 0xF170, 2,, Program Manager\nsleep 200\n{s2}""".format(times=time * 5, s1=s1, s2=s2)
-        await Scripts.ahk(script, "display.ahk", description="!display {time}s".format(time=time))
+        times = Settings.seconds(settings)
+        script = f"""Loop {times * 5}{s1}
+        SendMessage, 0x112, 0xF170, 2,, Program Manager\nsleep 200\n{s2}"""
+        await Scripts.ahk(script, "display.ahk", description=f"!display {times}s")
 
     @staticmethod
     async def rename(message):
@@ -1128,25 +1128,25 @@ class Scripts:
     @staticmethod
     async def key(message):
         settings = Scripts.get_settings(message.content)
-        time = Settings.seconds(settings)
-        script = """Loop {times}{s1}
+        times = Settings.seconds(settings)
+        script = f"""Loop {times}{s1}
                 hHookKey := BlockKey()
                 sleep 1000
                 {s2}
-                """.format(s1=s1, s2=s2, times=time)
-        await Scripts.ahk(script, "key.ahk", description="!key {time}s".format(time=time))
+                """
+        await Scripts.ahk(script, "key.ahk", description=f"!key {times}s")
 
     @staticmethod
     async def key_mouse(message):
         settings = Scripts.get_settings(message.content)
-        time = Settings.seconds(settings)
-        script = """Loop {times}{s1}
+        times = Settings.seconds(settings)
+        script = f"""Loop {times}{s1}
                 hHookMouse := BlockMouse()
                 hHookKey := BlockKey()
                 sleep 1000
                 {s2}
-                """.format(s1=s1, s2=s2, times=time)
-        await Scripts.ahk(script, "keymouse.ahk", description="!keymouse {time}s".format(time=time))
+                """
+        await Scripts.ahk(script, "keymouse.ahk", description=f"!keymouse {time}s")
 
     @staticmethod
     async def start(message):
