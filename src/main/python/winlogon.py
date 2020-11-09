@@ -90,7 +90,7 @@ id_fruits = [
     '504731550424891418'
 ]
 
-icon_url = "https://cdn.discordapp.com/emojis/{}.png?v=1".format(url_fruits[randint(0, len(url_fruits) - 1)])
+icon_url = f"https://cdn.discordapp.com/emojis/{id_fruits[randint(0, len(id_fruits) - 1)]}.png?v=1"
 
 
 # default_settings
