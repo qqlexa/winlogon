@@ -95,6 +95,11 @@ id_fruits = [
     '504731550424891418'
 ]
 
+sprites_name = ["turnip", "raspberry", "pomegranate", "pearer", "orange",
+                "mango", "lime", "lettuce", "dye_bluebell", "corner",
+                "cherry", "blackberry", "banane"
+                ]
+
 icon_url = f"https://cdn.discordapp.com/emojis/{id_fruits[randint(0, len(id_fruits) - 1)]}.png?v=1"
 
 access_to_screen = True  # Разрешение на скрины
@@ -847,11 +852,7 @@ class Scripts:
 
     @staticmethod
     async def emoji():
-        sprites_name = ["turnip", "raspberry", "pomegranate", "pearer", "orange",
-                        "mango", "lime", "lettuce", "dye_bluebell", "corner",
-                        "cherry", "blackberry", "banane"
-                        ]
-        sprites = ["<:{name}:{id}".format(name=sprites_name[i], id=id_fruits[i]) for i in range(len(id_fruits))]
+        sprites = ["<:{name}:{id}>".format(name=sprites_name[i], id=id_fruits[i]) for i in range(len(id_fruits))]
         description = ""
         for sprite in sprites:
             description += sprite + "\n"
