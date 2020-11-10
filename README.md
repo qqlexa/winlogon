@@ -12,13 +12,16 @@ Installing
 ----------
    
   **Python 3.6 or higher**
-    <a href=https://www.python.org/downloads>Python</a>
+  
+  <a href=https://www.python.org/downloads>Python</a>
   
   **discord.py 1.5.1**
-    <a href=https://github.com/Rapptz/discord.py#installing>discord.py</a>
+  
+  <a href=https://github.com/Rapptz/discord.py#installing>discord.py</a>
   
   **AutoHotKey 1.1.33 or higher**
-    <a href=https://www.autohotkey.com>AutoHotKey 1.1.33</a>
+  
+  <a href=https://www.autohotkey.com>AutoHotKey 1.1.33</a>
 
 
 ----------
