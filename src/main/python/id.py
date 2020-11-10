@@ -1,3 +1,6 @@
+import collections
+
+
 class ID:
     bot = 492655460084744203
     print(bot)
