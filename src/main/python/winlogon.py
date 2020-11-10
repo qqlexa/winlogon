@@ -37,6 +37,11 @@ except BaseException:
 
 from id import ID
 
+# flood, quit/exit, ping, disconnect, help/?, cls, emoji, screen, status,
+# oleha, mute, default, var, settings, save, path, f, folders, read, send,
+# update, rename, run, reload, key, ahk, mouse, sound, display, keymouse,
+# shutdown, minimize, demka, start, camera, 
+
 ALL_COMMANDS = ["!ahk",
                 "!display",
                 "!mouse",
