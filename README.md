@@ -8,6 +8,15 @@ English: Remote control of PC with bot in Discord: Python(<a href=https://github
 
 [![MouseMove](https://j.gifs.com/4Q7E46.gif)](https://youtu.be/JND1uxRq8FE)
 
+
+Usages
+----------
+   
+  **flood, quit/exit, ping, disconnect, help/?, cls, emoji, screen, status,
+ oleha, mute, default, var, settings, save, path, f, folders, read, send,
+ update, rename, run, reload, key, ahk, mouse, sound, display, keymouse,
+ shutdown, minimize, demka, start, camera**
+
 Installing
 ----------
    
