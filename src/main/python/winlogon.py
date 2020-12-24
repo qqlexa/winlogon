@@ -42,7 +42,7 @@ Commands:
 flood, quit/exit, ping, disconnect, help/?, cls, emoji, screen, status,
 oleha, mute, default, var, settings, save, path, f, folders, read, send,
 update, rename, run, reload, key, ahk, mouse, sound, display, keymouse,
-shutdown, minimize, demka, start, camera, 
+shutdown, minimize, demka, start, camera,
 
 ALL_COMMANDS = ["!ahk",
                 "!display",
@@ -58,6 +58,7 @@ privates = []
 is_privates = []
 login = os.getenv("COMPUTERNAME")  # login of PC
 file_name = os.path.dirname(__file__) + "/" + os.path.basename(__file__)  # file_name = os.path.basename(__file__)
+dir_name = os.path.dirname(__file__) + "/"
 
 login_name = os.getlogin()
 
@@ -80,35 +81,14 @@ CHECKING_AFK_STATUS = False
 s1, s2 = "{", "}"  # sign first, sign second
 msg_status_of_users = ""
 
-
-with open(os.path.dirname(__file__) + "/TOKEN") as f:
+with open(dir_name + "/TOKEN") as f:
     for read in f:
         token = read
 
-id_fruits = [
-    '504731857670242325',
-    '504731916423921664',
-    '504732125996515339',
-    '504732177162829839',
-    '504732162805727232',
-
-    '504732420210425856',
-    '504732459808587845',
-    '504732435813236756',
-    '504732015728394271',
-    '504731807368085537',
-    '504731761817944064',
-
-    '504731586466545705',
-    '504731550424891418'
-]
-
-sprites_name = ["turnip", "raspberry", "pomegranate", "pearer", "orange",
-                "mango", "lime", "lettuce", "dye_bluebell", "corner",
-                "cherry", "blackberry", "banane"
-                ]
-
-icon_url = f"https://cdn.discordapp.com/emojis/{id_fruits[randint(0, len(id_fruits) - 1)]}.png?v=1"
+with open(dir_name + "/fruit_id.json", "r") as r:
+    sprites_list = json.load(r)
+    icon_url = f"https://cdn.discordapp.com/emojis/{sprites_list['id'][randint(0, len(sprites_list) - 1)]}.png?v=1"
+    print(icon_url)
 
 access_to_screen = True  # Разрешение на скрины
 screen_delay = 100  # delay of pause
@@ -201,7 +181,10 @@ class Discord:
     async def create_embed(description="", thumbnail="", image="", time=True, status=True):
         global access_to_screen
         embed = Embed(title="", description=description, colour=random_color)
-        embed.set_author(name=login, url="", icon_url=icon_url)
+        if icon_url:
+            embed.set_author(name=login, url="", icon_url=icon_url)
+        else:
+            embed.set_author(name=login, url="")
 
         if access_to_screen and status:
             try:
