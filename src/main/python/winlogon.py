@@ -87,7 +87,8 @@ with open(dir_name + "/TOKEN") as f:
 
 with open(dir_name + "/fruit_id.json", "r") as r:
     sprites_list = json.load(r)
-    icon_url = f"https://cdn.discordapp.com/emojis/{sprites_list['id'][randint(0, len(sprites_list) - 1)]}.png?v=1"
+    icon_url = f"https://cdn.discordapp.com/emojis/" \
+               f"{sprites_list['id'][randint(0, len(sprites_list['id']) - 1)]}.png?v=1"
     print(icon_url)
 
 access_to_screen = True  # Разрешение на скрины
@@ -274,6 +275,7 @@ class Discord:
             return True
         return False
 
+    """
     @staticmethod
     def if_me():
         global login
@@ -282,7 +284,8 @@ class Discord:
                 return True
             else:
                 return False
-
+    """
+    
     #   #   #   #   #   Secret key
     @staticmethod
     async def check_secret_key(message):
@@ -294,7 +297,7 @@ class Discord:
                             if i == a:
                                 return True
                         role = discord.utils.get(message.server.roles, name='win-helper')
-                        await client.add_roles(message.author, role)
+                        await message.author.add_roles(role)
                         await Discord.send_embed(description="<@{}> с нами!".format(message.author.id))
                         is_privates.append(str(message.author.id))
 
@@ -843,10 +846,13 @@ class Scripts:
 
     @staticmethod
     async def emoji():
-        sprites = ["<:{name}:{id}>".format(name=sprites_name[i], id=id_fruits[i]) for i in range(len(id_fruits))]
-        description = ""
-        for sprite in sprites:
-            description += sprite + "\n"
+        if icon_url:
+            sprites = [f"<:{sprites_list['name'][i]}:{sprites_list['id'][i]}>" for i in range(len(sprites_list['id']))]
+            description = ""
+            for sprite in sprites:
+                description += sprite + "\n"
+        else:
+            description = "There is not smiles in data"
 
         await Discord.send_embed(description=description)
 
@@ -930,7 +936,7 @@ class Scripts:
             except BaseException:
                 full_answer, quantity_folders, index_files = "", 0, 0
                 print("Ошибка пути")
-                description = str(full__ans) + "\n**{quantity_folders}** folders and" \
+                description = str(full_answer) + "\n**{quantity_folders}** folders and" \
                                                "\n**{index_files}** files in `{path}`".format(
                     quantity_folders=quantity_folders,
                     index_files=index_files,
@@ -942,26 +948,36 @@ class Scripts:
                 x = False
                 embed = await Explorer.to_answer(full_answer, this_page=this_page)
                 while x is False:
-                    emoji = await client.wait_for_reaction(message=embed, user=message.author,
-                                                           emoji=["◀", "❌", "▶"])
+                    def check(reaction, user):
+                        if user == message.author:
+                            for i in ["◀", "❌", "▶"]:
+                                if i == str(reaction.emoji):
+                                    return True
+                            return False
+                        else:
+                            return False
 
-                    if emoji:
-                        if emoji.reaction.emoji == "❌":
+                    try:
+                        reaction, user = await client.wait_for('reaction_add', timeout=60.0, check=check)
+                    except asyncio.TimeoutError:
+                        await message.channel.send('👎')
+                    else:
+                        if str(reaction) == "❌":
                             await embed.delete()
 
-                        if emoji.reaction.emoji == "▶":
+                        if str(reaction) == "▶":
                             this_page += 1
                             description = Explorer.get_files_from_page(result, 2, this_page)
                             await Discord.edit_embed(embed, description=description)
-                            await client.clear_reactions(embed)
+                            await embed.clear_reactions()
                             await embed.add_reaction("◀")
                             await embed.add_reaction("❌")
 
-                        if emoji.reaction.emoji == "◀":
+                        if str(reaction) == "◀":
                             this_page -= 1
                             description = Explorer.get_files_from_page(result, 2, this_page)
                             await Discord.edit_embed(embed, description=description)
-                            await client.clear_reactions(embed)
+                            await embed.clear_reactions()
                             await embed.add_reaction("❌")
                             await embed.add_reaction("▶")
 
@@ -994,7 +1010,7 @@ class Scripts:
                 sleep 1000
                 {s2}
                 """
-        await Scripts.ahk(script, "mouse.ahk", description="!mouse {time}s".format(time=time))
+        await Scripts.ahk(script, "mouse.ahk", description=f"!mouse {times}s")
 
     """
     ФУНКЦІЇ ЯКИМ ПОТРІБНИЙ ДОСТУП
@@ -1094,7 +1110,7 @@ class Scripts:
             await Discord.send_embed(description="Слишком длинное имя.")
         await message.add_reaction("👍")
         await Discord.send_embed()
-        msg_status_of_users = await client.edit_message(msg_status_of_users, new_content=login)
+        msg_status_of_users = await msg_status_of_users.edit_message(new_content=login)
 
     @staticmethod
     async def reload(message):
@@ -1136,7 +1152,7 @@ class Scripts:
                 sleep 1000
                 {s2}
                 """
-        await Scripts.ahk(script, "keymouse.ahk", description=f"!keymouse {time}s")
+        await Scripts.ahk(script, "keymouse.ahk", description=f"!keymouse {times}s")
 
     @staticmethod
     async def start(message):
