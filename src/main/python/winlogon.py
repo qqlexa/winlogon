@@ -298,8 +298,7 @@ class WinlogonClient(discord.Client):
     """
 
     #   #   #   #   #   Secret key
-    @staticmethod
-    async def check_secret_key(message):
+    async def check_secret_key(self, message):
         if message.channel.id == ID.musical:
             if message.content.lower() == "!get":
                 for i in self.privates:
