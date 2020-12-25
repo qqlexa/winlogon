@@ -8,7 +8,7 @@ from os import remove as delete
 from re import split, findall
 
 from datetime import datetime
-# import time as time_class
+# import time
 
 from discord.ext import commands
 from discord import Game, Embed
@@ -120,8 +120,9 @@ class Discord:
                     await asyncio.sleep(0.5)
                     # print("I couldn't delete screen!")
                 else:
-                    pass
                     # print("exist - " + str(File.exist("screen.png")))
+                    pass
+                    
 
     @staticmethod
     async def mute_screen():
