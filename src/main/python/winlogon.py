@@ -38,6 +38,7 @@ except BaseException:
 from id import ID
 
 """
+QQ
 Commands:
 flood, quit/exit, ping, disconnect, help/?, cls, emoji, screen, status,
 oleha, mute, default, var, settings, save, path, f, folders, read, send,
