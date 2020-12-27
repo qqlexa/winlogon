@@ -1,0 +1,26 @@
+{
+  "name": [
+    ".png",
+    ".jpg",
+    ".rar",
+    ".zip",
+    ".txt",
+    ".mp4",
+    ".wmv",
+    ".mp3",
+    ".wma",
+    ".bat]"
+  ],
+  "id": [
+    "<:pngfileextensioninterfacesymbol:530180902635044864> ",
+    "<:jpg:530180003766337556>",
+    "<:rarfileformat:530180901062311936> ",
+    "<:zipcompressedfilesextension:530180902349832193> ",
+    "<:txttextfileextensionsymbol:530180902668599315> ",
+    "<:mp4fileformatsymbol:530180901045272596> ",
+    "<:wmvfileformatextension:530180004839948298> ",
+    "<:mp3fileformatvariant:530180901192073216> ",
+    "<:wma:530180003695034369> ",
+    "<:batt:530180003627794432> "
+  ]
+}
