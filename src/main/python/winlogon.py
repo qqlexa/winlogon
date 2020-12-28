@@ -420,16 +420,7 @@ class WinlogonClient(discord.Client):
                                 b += 1
                     return z, b
 
-                explorer_array = [[".png", "<:pngfileextensioninterfacesymbol:530180902635044864> "],
-                                  [".jpg", "<:jpg:530180003766337556> "],
-                                  [".rar", "<:rarfileformat:530180901062311936> "],
-                                  [".zip", "<:zipcompressedfilesextension:530180902349832193> "],
-                                  [".txt", "<:txttextfileextensionsymbol:530180902668599315> "],
-                                  [".mp4", "<:mp4fileformatsymbol:530180901045272596> "],
-                                  [".wmv", "<:wmvfileformatextension:530180004839948298> "],
-                                  [".mp3", "<:mp3fileformatvariant:530180901192073216> "],
-                                  [".wma", "<:wma:530180003695034369> "],
-                                  [".bat", "<:batt:530180003627794432> "]]
+                explorer_array = file_id.json
 
                 for i in explorer_array:
                     full_answer, files_index = add_file(full_answer, path, files_index, i[0], i[1])
@@ -559,7 +550,6 @@ class WinlogonClient(discord.Client):
 
             @staticmethod
             def change_variable(settings):
-                global self.access_to_screen, screen_delay, self.lost_screen_delay
                 if settings:
                     dictionary, arg_dict = Settings.get_dictionary(settings)
 
