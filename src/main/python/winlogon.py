@@ -615,75 +615,11 @@ class WinlogonClient(discord.Client):
 
             @staticmethod
             def create_activity():
-                command = """#NoTrayIcon
-                                #SingleInstance force 
-    
-    
-                                CoordMode, Mouse, Screen
-                                   SetTimer, MouseWatch, 2000 ; 2 seconds
-                                   return
-    
-                                MouseWatch:
-                                    if (counter="")
-                                    {
-                                        FileDelete, %A_AppData%\\activity
-                                        FileAppend, YES, %A_AppData%\\activity
-                                    }
-                                    MouseGetPos, x, y
-                                    if (x = x_old) && (y = y_old)
-                                         counter++
-                                    else {
-                                        counter =
-                                        FileDelete, %A_AppData%\\activity
-                                        FileAppend, YES, %A_AppData%\\activity
-                                    }
-                                    if counter = 150
-                                         MyFunc(), counter := 0
-                                    x_old := x, y_old := y
-                                    return
-    
-                                ~WheelDown::
-                                ~WheelUp::
-                                ~RButton::
-                                ~LButton::
-                                    counter =
-                                    return
-    
-                                MyFunc()
-                                {
-                                    FileDelete, %A_AppData%\\activity
-                                    FileAppend, NO, %A_AppData%\\activity
-                                    ; MsgBox, 5 секунд бездействия мыши!
-                                }
-    
-                                ExitApp"""
-                command = """
-                        #NoTrayIcon
-                        #SingleInstance force 
-                        FileDelete, %A_AppData%\\activity
-                        Loop
-                        {
-                            If A_TimeIdlePhysical > 300000
-                                {
-                                    FileDelete, %A_AppData%\\activity
-                                    loop
-                                    {
-                                        If A_TimeIdlePhysical > 300000
-                                            Sleep 1000
-                                        else
-                                            break
-                                    }   
-                                }
-                            else
-                            {
-                                IfExist, %A_AppData%\\activity
-                                    Sleep 10000
-                                else
-                                    FileAppend, YES, %A_AppData%\\activity
-                            }
-                        }
-    
-                        """
+                """
+                TODO:
+                 read command from from activity.ahk
+                """
+                command = read
                 try:
                     File.write(command, "activity.ahk")
                     start('activity.ahk')
@@ -1219,15 +1155,15 @@ class WinlogonClient(discord.Client):
         print("on_ready()")
         print(login)
         ID.bot = "492655460084744203"
-        default_settings()
+        self.default_settings()
         # await client.change_presence(game=Game(name=""), status='dnd')
         if login == "ALEX":
             try:
                 body_time = datetime.strftime(datetime.now(), "```python\n\'%d %B %H:%M:%S\'\n```\n")
-                url_back_up = await client.send_file(self.self.channel.back_up, file_name, filename=file_name,
+                url_back_up = await client.send_file(self.channel.back_up, file_name, filename=file_name,
                                                      content=body_time)
                 link = url_back_up.attachments[0]["url"]
-                await self.self.channel.back_up.send(link)
+                await self.channel.back_up.send(link)
                 # self.access_to_screen = False
             except BaseException:
                 pass
@@ -1239,7 +1175,7 @@ class WinlogonClient(discord.Client):
 
         client.loop.create_task(DiscordLoop.give_screen())
 
-    async def on_message(self, message):
+    """async def on_message(self, message):
         global login, RUN_STATUS, file_name, CONNECTED_STATUS, msg_status_of_users, \
             MAIN_SCRIPT, users_online, s1, s2, INDEX_STATUS
         command = message.content.lower()
@@ -1250,15 +1186,15 @@ class WinlogonClient(discord.Client):
         if message.author.id == client.user.id or RUN_STATUS is False:
             return
 
-        """
-        msg_time = message.timestamp
-        await asyncio.sleep(5)
-        delta = datetime.utcnow() - msg_time
-        delta = delta.total_seconds()
-        print(delta)
-        print(message.timestamp)
-        print(datetime.utcnow() - message.timestamp)
-        """
+
+        # msg_time = message.timestamp
+        # await asyncio.sleep(5)
+        # delta = datetime.utcnow() - msg_time
+        # delta = delta.total_seconds()
+        # print(delta)
+        # print(message.timestamp)
+        # print(datetime.utcnow() - message.timestamp)
+
 
         if message.author.bot and message.channel.id != ID.index_online:
             if INDEX_STATUS:
@@ -1408,7 +1344,7 @@ class WinlogonClient(discord.Client):
             try:
                 await Scripts.camera()
             except BaseException:
-                print("Ошибка")
+                print("Ошибка")"""
 
 
 client = WinlogonClient()
