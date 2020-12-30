@@ -314,6 +314,10 @@ class WinlogonClient(discord.Client):
 
     @staticmethod
     async def oleha(message):
+        """
+        TODO:
+        Change the name of function, change structure of using commands
+        """
         await Scripts.send_message(message, text="СЛАВА УКРАЇНІ!")
 
         class File:
