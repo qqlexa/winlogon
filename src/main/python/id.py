@@ -1,7 +1,7 @@
-import collections
+import enum
 
 
-class ID:
+class ID(enum.Enum):
     bot = 492655460084744203
     print(bot)
     my_id = 285097296817946625
@@ -13,7 +13,3 @@ class ID:
     back_up = 514105658958675991
     buffer = 521825625028427776
     musical = 420965533526130708
-
-
-if __name__ == '__main__':
-    pass
